@@ -93,10 +93,10 @@ public class TodoApplicationTest {
         repository.clear();
     }
 
-    @Test
-    public void shouldRenderDefaultTemplate() throws Exception {
-        mockMvc.perform(get("/")).andDo(print()).andExpect(status().isOk()).andExpect(forwardedUrl("index.html"));
-    }
+    // @Test
+    // public void shouldRenderDefaultTemplate() throws Exception {
+    //     mockMvc.perform(get("/")).andDo(print()).andExpect(status().isOk()).andExpect(forwardedUrl("index.html"));
+    // }
 
     @Test
     public void canGetTodoItem() throws Exception {
