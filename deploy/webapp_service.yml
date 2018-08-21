@@ -1,0 +1,17 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: frontend
+  namespace: default
+  labels:
+    k8s-app: frontend
+spec:
+  ports:
+  - name: tcp-80-80-qzbnb
+    protocol: TCP
+    port: 80
+    targetPort: 80
+  selector:
+    k8s-app: frontend
+  type: LoadBalancer

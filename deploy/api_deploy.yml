@@ -1,0 +1,29 @@
+---
+kind: Deployment
+apiVersion: extensions/v1beta1
+metadata:
+  name: backend
+  namespace: default
+  labels:
+    k8s-app: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      k8s-app: backend
+  template:
+    metadata:
+      name: backend
+      labels:
+        k8s-app: backend
+    spec:
+      containers:
+      - name: backend
+        image: ${ACR_SERVER}/api:${BUILD_NUMBER}
+      imagePullSecrets:
+      - name: regcred
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 25%
+      maxSurge: 25%

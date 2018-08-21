@@ -1,0 +1,29 @@
+---
+kind: Deployment
+apiVersion: extensions/v1beta1
+metadata:
+  name: frontend
+  namespace: default
+  labels:
+    k8s-app: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      k8s-app: frontend
+  template:
+    metadata:
+      name: frontend
+      labels:
+        k8s-app: frontend
+    spec:
+      containers:
+      - name: frontend
+        image: ${ACR_SERVER}/webapp:${BUILD_NUMBER}
+      imagePullSecrets:
+      - name: regcred
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 25%
+      maxSurge: 25%

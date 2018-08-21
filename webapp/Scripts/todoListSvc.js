@@ -7,23 +7,24 @@
 'use strict';
 angular.module('todoApp')
     .factory('todoListSvc', ['$http', function ($http) {
+        var endpoint = '127.0.0.1';
         return {
             getItems: function () {
-                return $http.get('http://40.121.0.118/api/todolist');
+                return $http.get('http://' + endpoint + '/api/todolist');
             },
             getItem: function (id) {
-                return $http.get('http://40.121.0.118/api/todolist/' + id);
+                return $http.get('http://' + endpoint + '/api/todolist/' + id);
             },
             postItem: function (item) {
-                return $http.post('http://40.121.0.118/api/todolist/', item);
+                return $http.post('http://' + endpoint + '/api/todolist/', item);
             },
             putItem: function (item) {
-                return $http.put('http://40.121.0.118/api/todolist/', item);
+                return $http.put('http://' + endpoint + '/api/todolist/', item);
             },
             deleteItem: function (id) {
                 return $http({
                     method: 'DELETE',
-                    url: 'http://40.121.0.118/api/todolist/' + id
+                    url: 'http://' + endpoint + '/api/todolist/' + id
                 });
             }
         };
