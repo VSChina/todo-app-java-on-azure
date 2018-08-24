@@ -1,0 +1,140 @@
+- name: Create Azure VM
+  hosts: localhost
+  connection: local
+  gather_facts: true
+  vars:
+    resource_group: "{{ lookup('env', 'RES_GROUP') }}"
+    location: eastus
+    vnet_name: myVnet
+    subnet_name: mySubnet
+    vm_name: myVM
+    securitygroup_name: mySecurityGroup
+    public_ip_name: myPublicIP
+    network_interfaces_name: myNetworkInterface
+    admin_username: azureuser
+    admin_password: Password@123
+    artifact_url: "{{ lookup('env', 'ARTIFACT_URL') }}"
+    app_name: "{{ lookup('env', 'APP_NAME') }}"
+  roles:
+    - azure_preview_modules
+  tasks:
+    - name: Create a resource group
+      azure_rm_resourcegroup:
+        name: "{{ resource_group }}"
+        location: "{{ location }}"
+   
+    - name: Create virtual network
+      azure_rm_virtualnetwork:
+        resource_group: "{{ resource_group }}"
+        name: "{{ vnet_name }}"
+        address_prefixes: "10.0.0.0/16"
+
+    - name: Add subnet
+      azure_rm_subnet:
+        resource_group: "{{ resource_group }}"
+        name: "{{ subnet_name }}"
+        address_prefix: "10.0.1.0/24"
+        virtual_network: "{{ vnet_name }}"
+
+    - name: Create public IP address
+      azure_rm_publicipaddress:
+        resource_group: "{{ resource_group }}"
+        allocation_method: Static
+        name: "{{ public_ip_name }}"
+
+    - name: Create Network Security Group that allows SSH
+      azure_rm_securitygroup:
+        resource_group: "{{ resource_group }}"
+        name: "{{ securitygroup_name }}"
+        purge_rules: yes
+        rules:
+          - name: DenySSH
+            protocol: Tcp
+            destination_port_range: 22
+            access: Deny
+            priority: 100
+            direction: Inbound
+          - name: AllowSSH
+            protocol: Tcp
+            destination_port_range: 22
+            access: Allow
+            priority: 1001
+            direction: Inbound
+            source_address_prefix:
+              - '172.17.139.0/24'
+          - name: Tomcat
+            protocol: Tcp
+            destination_port_range: 8080
+            access: Allow
+            priority: 1002
+            direction: Inbound
+
+    - name: Create virtual network inteface card
+      azure_rm_networkinterface:
+        resource_group: "{{ resource_group }}"
+        name: "{{ network_interfaces_name }}"
+        virtual_network: "{{ vnet_name }}"
+        subnet: "{{ subnet_name }}"
+        public_ip_name: "{{ public_ip_name }}"
+        security_group: "{{ securitygroup_name }}"
+
+    - name: Create Azure VM
+      azure_rm_virtualmachine:
+        resource_group: "{{ resource_group }}"
+        name: "{{ vm_name }}"
+        vm_size: Standard_DS1_v2
+        admin_username: "{{ admin_username }}"
+        admin_password: "{{ admin_password }}"
+        network_interfaces: "{{ network_interfaces_name }}"
+        image:
+          offer: UbuntuServer 
+          publisher: Canonical
+          sku: 16.04-LTS
+          version: latest
+      register: output
+    - debug: 
+        var: output
+
+    - name: add azure vm into host
+      add_host:
+        name: new_azure_vm
+        ansible_host: '{{ output.ansible_facts.azure_vm.properties.networkProfile.networkInterfaces[0].properties.ipConfigurations[0].properties.publicIPAddress.properties.ipAddress}}'
+        ansible_connection: paramiko  # not guaranteed to have sshpass...
+        ansible_user: "{{ admin_username }}"
+        ansible_password: "{{ admin_password }}"
+        ansible_host_key_checking: false
+
+    - name: Check if we can ssh to the server
+      wait_for:
+        port: 22
+        host: '{{ output.ansible_facts.azure_vm.properties.networkProfile.networkInterfaces[0].properties.ipConfigurations[0].properties.publicIPAddress.properties.ipAddress }}'
+        timeout: 600
+
+    - block:
+      - name: Update repositories cache and install "tomcat8" package
+        become: true
+        apt:
+          name: tomcat8
+          update_cache: yes
+
+      - name: Install "tomcat8-admin" package
+        become: true
+        apt:
+          name: tomcat8-admin
+
+      - name: Download the artifact
+        get_url:
+          force: yes
+          url: "{{ artifact_url }}"
+          dest: "/var/lib/tomcat8/webapps/{{ app_name }}.war"
+        stat:
+          path: "/var/lib/tomcat8/webapps/{{ app_name }}.war"
+
+      - name: Start and enable Tomcat service
+        become: true
+        systemd:
+          name: tomcat8
+          state: started
+          enabled: true
+          daemon_reload: true
+      delegate_to: new_azure_vm
