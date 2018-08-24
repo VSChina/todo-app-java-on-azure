@@ -15,8 +15,6 @@
     admin_password: Password@123
     artifact_url: "{{ lookup('env', 'ARTIFACT_URL') }}"
     app_name: "{{ lookup('env', 'APP_NAME') }}"
-  roles:
-    - azure_preview_modules
   tasks:
     - name: Create a resource group
       azure_rm_resourcegroup:
