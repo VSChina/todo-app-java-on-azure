@@ -59,7 +59,7 @@
             priority: 1001
             direction: Inbound
             source_address_prefix:
-              - '172.17.139.0/24'
+              - '52.175.212.0/24'
           - name: Tomcat
             protocol: Tcp
             destination_port_range: 8080
@@ -89,9 +89,6 @@
           publisher: Canonical
           sku: 16.04-LTS
           version: latest
-      register: output
-    - debug: 
-        var: output
 
     - name: add azure vm into host
       add_host:
