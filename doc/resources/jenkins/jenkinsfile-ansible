@@ -26,12 +26,17 @@ node {
   stage('Deploy') {
     def artifactUrl = "https://jenkinsdebug.file.core.windows.net/artifacts/app.war?sv=2017-11-09&ss=bfqt&srt=sco&sp=rwdlacup&se=2018-10-01T13:37:20Z&st=2018-08-24T05:37:20Z&spr=https&sig=2N22Ca7WOG9udDUZ%2B6WeGf6YUW8wiQD1OvpXZP6kGSI%3D"
     withEnv(["ARTIFACT_URL=${artifactUrl}", "APP_NAME=app"]) {
-      ansiblePlaybook colorized: true, 
-      credentialsId: 'ssh-jenkins',
-      installation: 'ansible',
-      playbook: 'deploy/ansible/playbook.yml', 
-      sudo: true,
-      sudoUser: 'jenkins'
+      withCredentials([azureServicePrincipal(credentialsId: 'credentials_id',
+                                      subscriptionIdVariable: 'AZURE_SUBSCRIPTION_ID',
+                                      clientIdVariable: 'AZURE_CLIENT_ID',
+                                      clientSecretVariable: 'AZURE_SECRET',
+                                      tenantIdVariable: 'AZURE_TENANT')]) {
+        ansiblePlaybook colorized: true, 
+        installation: 'ansible',
+        playbook: 'deploy/ansible/playbook.yml', 
+        sudo: true,
+        sudoUser: 'jenkins'
+      }
     }
   }
 }
