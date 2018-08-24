@@ -89,6 +89,7 @@
           publisher: Canonical
           sku: 16.04-LTS
           version: latest
+      register: output
 
     - name: add azure vm into host
       add_host:
