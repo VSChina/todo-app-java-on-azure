@@ -125,8 +125,6 @@
           force: yes
           url: "{{ artifact_url }}"
           dest: "/var/lib/tomcat8/webapps/{{ app_name }}.war"
-        stat:
-          path: "/var/lib/tomcat8/webapps/{{ app_name }}.war"
 
       - name: Start and enable Tomcat service
         become: true
