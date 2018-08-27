@@ -21,6 +21,8 @@
         plan:
           resource_group: "{{ resource_group }}"
           name: myappplan
+          is_linux: true
+          sku: S1
         frameworks:
           - name: "java"
             version: "1.8"
