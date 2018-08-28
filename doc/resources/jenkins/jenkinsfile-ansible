@@ -7,8 +7,8 @@ node {
       ## Install Ansible and Azure SDKs via pip
       python -m pip install ansible[azure]
 
-      ansible-galaxy install --force git+https://github.com/Azure/azure_preview_modules.git,webapp
-      python -m pip install -r  ~/.ansible/roles/azure_preview_modules/files/requirements-azure.txt --user
+      ansible-galaxy install Azure.azure_preview_modules
+      python -m pip install -r  ~/.ansible/roles/Azure.azure_preview_modules/files/requirements-azure.txt~/.ansible/roles/azure_preview_modules/files/requirements-azure.txt --user
     '''
     checkout scm
   }

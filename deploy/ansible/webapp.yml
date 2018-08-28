@@ -7,7 +7,7 @@
     webapp_name: "{{ lookup('env', 'WEB_APP_NAME') }}"
     location: eastus
   roles:
-    - azure_preview_modules
+    - Azure.azure_preview_modules
   tasks:
     - name: Create a resource group
       azure_rm_resourcegroup:
@@ -23,9 +23,7 @@
           name: myappplan
           is_linux: true
           sku: S1
+          number_of_workers: 1
         frameworks:
           - name: "java"
-            version: "1.8"
-            settings:
-              java_container: "Tomcat"
-              java_container_version: "8.0"
+            version: "8"
