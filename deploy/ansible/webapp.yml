@@ -27,3 +27,7 @@
         frameworks:
           - name: "java"
             version: "8"
+            settings:
+              java_container: tomcat
+              java_container_version: 8.5
+
