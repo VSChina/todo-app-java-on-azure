@@ -43,6 +43,8 @@ node {
                                     clientIdVariable: 'AZURE_CLIENT_ID',
                                     clientSecretVariable: 'AZURE_SECRET',
                                     tenantIdVariable: 'AZURE_TENANT')]) {
+                                      
+      ansiblePlaybook colorized: true, 
       installation: 'ansible',
       playbook: 'deploy/ansible/webapp.yml', 
       sudo: true,
