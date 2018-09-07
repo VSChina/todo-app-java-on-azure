@@ -1,16 +1,26 @@
 node {
-  stage('Init') {
+  stage('Setup') {
     sh '''
-      ## Install pre-requisite packages
-      ## sudo apt-get update && sudo apt-get install -y libssl-dev libffi-dev python-dev python-pip
-
-      ## Install Ansible and Azure SDKs via pip
-      python -m pip install ansible[azure]
-
+      ## Set up python environment
+      curl 'https://bootstrap.pypa.io/get-pip.py' > get-pip.py && sudo python get-pip.pycurl 'https://bootstrap.pypa.io/get-pip.py' > get-pip.py && sudo python get-pip.py
+      
+      ## Install ansible
+      sudo apt-get update
+      sudo apt-get install software-properties-common -y
+      sudo apt-add-repository ppa:ansible/ansible -y
+      sudo apt-get update
+      sudo apt-get install ansible
+      
+      ## Install Azure SDKs via pip
+      sudo python -m pip install ansible[azure]
+      
+      ## Install Azure preview modules
       ansible-galaxy install Azure.azure_preview_modules
       python -m pip install -r  ~/.ansible/roles/Azure.azure_preview_modules/files/requirements-azure.txt --user
     '''
-
+  }
+  
+  stage('Init') {
     checkout scm
   }
 
@@ -19,22 +29,6 @@ node {
         mvn clean package
         mv target/*.war ROOT.war
     '''
-  }
-
-  stage('Unit Tests') {
-
-  }
-
-  stage('Integration Tests') {
-
-  }
-
-  stage('Analysis') {
-
-  }
-
-  stage('Upload Artifact') {
-
   }
 
   stage('Deploy') {
