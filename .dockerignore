@@ -1,4 +1,4 @@
-!target/*.jar
+!target/**.jar
 target/**
 !Dockerfile
 **
