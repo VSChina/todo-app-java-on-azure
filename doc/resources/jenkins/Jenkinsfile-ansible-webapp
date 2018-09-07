@@ -38,8 +38,7 @@ node {
                                     clientSecretVariable: 'AZURE_SECRET',
                                     tenantIdVariable: 'AZURE_TENANT')]) {
                                       
-      ansiblePlaybook 
-      playbook: 'deploy/ansible/webapp.yml', 
+      ansiblePlaybook playbook: 'deploy/ansible/webapp.yml', 
       sudo: true,
       sudoUser: 'env.JENKINS_ADMIN'
     }
