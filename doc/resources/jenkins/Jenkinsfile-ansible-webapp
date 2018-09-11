@@ -11,16 +11,18 @@ node {
   }
 
   stage('Deploy') {
-    withCredentials([azureServicePrincipal(credentialsId: env.AZURE_CRED_ID,
-                                    subscriptionIdVariable: 'AZURE_SUBSCRIPTION_ID',
-                                    clientIdVariable: 'AZURE_CLIENT_ID',
-                                    clientSecretVariable: 'AZURE_SECRET',
-                                    tenantIdVariable: 'AZURE_TENANT')]) {
-                                      
-      ansiblePlaybook installation: 'ansible',
-      playbook: 'deploy/ansible/webapp.yml', 
-      sudo: true,
-      sudoUser: env.JENKINS_ADMIN
+    withEnv(["ANSIBLE_ROLES_PATH=/etc/ansible/roles/"]) {
+      withCredentials([azureServicePrincipal(credentialsId: env.AZURE_CRED_ID,
+                                      subscriptionIdVariable: 'AZURE_SUBSCRIPTION_ID',
+                                      clientIdVariable: 'AZURE_CLIENT_ID',
+                                      clientSecretVariable: 'AZURE_SECRET',
+                                      tenantIdVariable: 'AZURE_TENANT')]) {
+                                        
+        ansiblePlaybook installation: 'ansible',
+        playbook: 'deploy/ansible/webapp.yml', 
+        sudo: true,
+        sudoUser: env.JENKINS_ADMIN
+      }
     }
 
     azureWebAppPublish azureCredentialsId: env.AZURE_CRED_ID,
