@@ -13,7 +13,8 @@ node {
                   buildArgs: [[key: 'dbUrl', secrecy: false, value: env.DOCUMENTDB_URI],
                               [key: 'dbKey', secrecy: true, value: env.DOCUMENTDB_KEY],
                               [key: 'dbName', secrecy: false, value: env.DOCUMENTDB_DBNAME]]
-  }
+ }
+ // skip test image steps
  stage('deploy') {
     sh 'wget https://raw.githubusercontent.com/Microsoft/todo-app-java-on-azure/master/doc/resources/jenkins/deployment.yml -O deployment.yml'
     acsDeploy azureCredentialsId: env.AZURE_CRED_ID, 
