@@ -17,9 +17,10 @@ node {
                                     clientSecretVariable: 'AZURE_SECRET',
                                     tenantIdVariable: 'AZURE_TENANT')]) {
                                       
-      ansiblePlaybook playbook: 'deploy/ansible/webapp.yml', 
+      ansiblePlaybook installation: 'ansible',
+      playbook: 'deploy/ansible/webapp.yml', 
       sudo: true,
-      sudoUser: env.JENKINS_ADMIN
+      sudoUser: 'env.JENKINS_ADMIN'
     }
 
     azureWebAppPublish azureCredentialsId: env.AZURE_CRED_ID,
