@@ -6,12 +6,14 @@ node {
 
   stage('build') {
     sh 'mvn clean package'
+    // skip integration test
     acrQuickBuild azureCredentialsId: env.AZURE_CRED_ID,
                   resourceGroupName: env.ACR_RES_GROUP,
                   registryName: env.ACR_NAME,
                   platform: "Linux",
                   dockerfile: "Dockerfile",
                   imageNames: [[image: "$env.ACR_REGISTRY/$env.IMAGE_NAME:$env.BUILD_NUMBER"]]
+    // skip docker image test
   }
 
   stage('deploy') {
