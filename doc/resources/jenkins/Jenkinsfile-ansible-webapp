@@ -20,8 +20,8 @@ node {
       ansiblePlaybook installation: 'ansible',
       playbook: 'deploy/ansible/webapp.yml', 
       sudo: true,
-      sudoUser: env.JENKINS_ADMIN,
-      extraVars: ANSIBLE_ROLES_PATH=~/.ansible/roles
+      sudoUser: env.JENKINS_USER,
+      extraVars: roles_path='/home/$env.JENKINS_USER/.ansible/roles'
     }
 
     azureWebAppPublish azureCredentialsId: env.AZURE_CRED_ID,
