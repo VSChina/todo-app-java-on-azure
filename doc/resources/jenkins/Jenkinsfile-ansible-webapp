@@ -19,10 +19,7 @@ node {
                                       
       sh 'export ANSIBLE_ROLES_PATH=/home/$env.JENKINS_USER/.ansible/roles'
       ansiblePlaybook installation: 'ansible',
-      playbook: 'deploy/ansible/webapp.yml', 
-      sudo: true,
-      sudoUser: env.JENKINS_USER,
-      extraVars: roles_path='/home/$env.JENKINS_USER/.ansible/roles'
+      playbook: 'deploy/ansible/webapp.yml'
     }
 
     azureWebAppPublish azureCredentialsId: env.AZURE_CRED_ID,
