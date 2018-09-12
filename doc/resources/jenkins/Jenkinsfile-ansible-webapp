@@ -17,6 +17,7 @@ node {
                                     clientSecretVariable: 'AZURE_SECRET',
                                     tenantIdVariable: 'AZURE_TENANT')]) {
                                       
+      sh 'export ANSIBLE_ROLES_PATH=/home/$env.JENKINS_USER/.ansible/roles'
       ansiblePlaybook installation: 'ansible',
       playbook: 'deploy/ansible/webapp.yml', 
       sudo: true,
