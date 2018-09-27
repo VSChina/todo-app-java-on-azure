@@ -5,8 +5,8 @@
     resource_group: "{{ lookup('env', 'RES_GROUP') }}"
     webapp_name: "{{ lookup('env', 'WEB_APP_NAME') }}"
     location: eastus
-  roles:
-    - Azure.azure_preview_modules
+ # roles:
+  #  - Azure.azure_preview_modules
   tasks:
     - name: Create a resource group
       azure_rm_resourcegroup:
