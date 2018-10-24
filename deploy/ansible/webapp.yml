@@ -1,3 +1,4 @@
+# Required ansible version >= 2.7.0
 - name: Create Azure VM
   hosts: localhost
   connection: local
@@ -5,8 +6,6 @@
     resource_group: "{{ lookup('env', 'RES_GROUP') }}"
     webapp_name: "{{ lookup('env', 'WEB_APP_NAME') }}"
     location: eastus
- # roles:
-  #  - Azure.azure_preview_modules
   tasks:
     - name: Create a resource group
       azure_rm_resourcegroup:
@@ -29,4 +28,10 @@
             settings:
               java_container: tomcat
               java_container_version: 8.5
-
+    - name: Retrieve web app information
+      azure_rm_webapp_facts:
+        resource_group: "{{ resource_group }}"
+        name: "{{ webapp_name }}"
+      register: output
+    - debug:
+        var: output.webapps[0].host_names
